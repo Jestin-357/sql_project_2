@@ -68,110 +68,76 @@ SELECT * FROM Books WHERE category = 'Technology';
 
 SELECT * FROM Books WHERE category = 'Technology';
 
-### 2. Find the **most expensive book**.
+### 2. Find the most expensive book**.
 
 SELECT * 
 FROM Books 
 WHERE price = (SELECT MAX(price) FROM Books);
 
-
-
+select * from books from 
 ### 3. Get the **total number of books** in the library.
-
-
 SELECT COUNT(*) AS total_books FROM Books;
 
----
+### 4. Find members who never borrowed a book.
 
-### 4. Find members who **never borrowed** a book.
-
-```sql
+select * from borrowings;
 SELECT m.* 
 FROM Members m
 LEFT JOIN Borrowings b ON m.member_id = b.member_id
 WHERE b.borrow_id IS NULL;
-```
 
----
+### 5. Show all books that are currently borrowed (not returned).
 
-### 5. Show all books that are **currently borrowed** (not returned).
+select * from `Books`;
+select * from `Borrowings`;
+select * from `Borrowings`
+where return_date is null;
 
-```sql
-SELECT bk.*
-FROM Books bk
-JOIN Borrowings br ON bk.book_id = br.book_id
-WHERE br.return_date IS NULL;
-```
+### 6. Get the total borrow count per member.
+select m.name, count(br.borrow_id) AS borrow_count
+from `Members` m
+join `Borrowings` br on m.member_id = br.member_id
+group by m.name;
 
----
+### 7. Find the member who borrowed the most books.
 
-### 6. Get the **total borrow count per member**.
+select m.name, count(br.borrow_id) as borrow_count
+from Members m
+join Borrowings br on m.member_id = br.member_id
+group by m.name
+order by borrow_count DESC limit 1;
 
-```sql
-SELECT m.name, COUNT(br.borrow_id) AS borrow_count
-FROM Members m
-LEFT JOIN Borrowings br ON m.member_id = br.member_id
-GROUP BY m.name;
-```
+### 8. Get the average borrow duration (in days)
 
----
-
-### 7. Find the **member who borrowed the most books**.
-
-```sql
-SELECT m.name, COUNT(br.borrow_id) AS borrow_count
-FROM Members m
-JOIN Borrowings br ON m.member_id = br.member_id
-GROUP BY m.name
-ORDER BY borrow_count DESC
-LIMIT 1;
-```
-
----
-
-### 8. Get the **average borrow duration** (in days).
-
-```sql
 SELECT AVG(DATEDIFF(return_date, borrow_date)) AS avg_duration
 FROM Borrowings
 WHERE return_date IS NOT NULL;
-```
 
----
+### 9. Find all books borrowed by Alice.
 
-### 9. Find all books borrowed by **Alice**.
-
-```sql
 SELECT b.title
 FROM Books b
 JOIN Borrowings br ON b.book_id = br.book_id
 JOIN Members m ON br.member_id = m.member_id
 WHERE m.name = 'Alice';
-```
 
----
+select b.title
+from books b
+join
 
-### 10. Find members who borrowed at least **2 different books**.
 
-```sql
+### 10. Find members who borrowed at least **2 different books.
+
 SELECT m.name
 FROM Members m
 JOIN Borrowings br ON m.member_id = br.member_id
 GROUP BY m.name
 HAVING COUNT(DISTINCT br.book_id) >= 2;
-```
 
----
-
-### 11. Show borrowings where **return\_date IS NULL**.
-
-```sql
+### 11.Show borrowings where **return\_date IS NULL
 SELECT * FROM Borrowings WHERE return_date IS NULL;
-```
 
----
-
-### 12. Get the **latest borrowed book**.
+### 12. Get the latest borrowed book**.
 
 ```sql
 SELECT b.title, br.borrow_date
